@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHUBHAM'S BIRTHDAY 🎂</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Poppins:wght@900&display=swap');
+
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #020205; font-family: 'Poppins', sans-serif; color: white; }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
+
+        .section {
+            position: relative; height: 100vh; width: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; z-index: 10;
+        }
+
+        /* 🕺 Dance Characters (Initially Hidden) */
+        .dance-char {
+            position: absolute; font-size: 100px; display: none;
+            bottom: 10%; z-index: 15;
+            animation: dance 0.6s infinite alternate;
+        }
+        .dancer-left { left: 10%; }
+        .dancer-right { right: 10%; }
+
+        @keyframes dance {
+            from { transform: translateY(0) rotate(-10deg) scale(1); }
+            to { transform: translateY(-30px) rotate(10deg) scale(1.2); }
+        }
+
+        /* 🌸 Intro Character */
+        .char-intro { font-size: 100px; animation: float 3s infinite ease-in-out; }
+        .bubble { 
+            background: white; color: black; padding: 15px; border-radius: 20px; 
+            font-weight: bold; margin-bottom: 20px; box-shadow: 0 0 20px #00f2ff; 
+        }
+
+        /* 🍰 Cake Styling */
+        .cake-container { position: relative; width: 250px; cursor: pointer; margin-bottom: 20px; }
+        .cake { font-size: 140px; transition: 0.5s; }
+        .candle { 
+            position: absolute; top: -30px; left: 50%; transform: translateX(-50%); 
+            font-size: 45px; animation: flicker 0.3s infinite alternate; 
+        }
+
+        /* UI Buttons */
+        .btn-next {
+            background: #ff007f; color: white; border: none; padding: 18px 45px;
+            border-radius: 50px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 0 20px #ff007f; font-size: 1.2rem; transition: 0.3s;
+        }
+        .btn-next:hover { transform: scale(1.1); box-shadow: 0 0 40px #ff007f; }
+
+        .headline { font-family: 'Bungee', cursive; font-size: 4.5rem; text-shadow: 0 0 20px #00f2ff; display: none; }
+        .hidden { display: none; }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        @keyframes flicker { from { opacity: 0.8; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="dance-char dancer-left" id="d1">🕺</div>
+    <div class="dance-char dancer-right" id="d2">💃</div>
+
+    <div class="section" id="sec1">
+        <div class="bubble">"Kya aap taiyaar hain? Aaj SHUBHAM ka birthday hai! 🙋‍♀️"</div>
+        <div class="char-intro">🙋‍♀️</div>
+        <h2 style="color: #00f2ff; letter-spacing: 3px;">10 MAY SPECIAL EVENT</h2>
+        <button class="btn-next" onclick="scrollToSec(2)">GIFT KHOLTE HAIN ➡️</button>
+    </div>
+
+    <div class="section hidden" id="sec2">
+        <h1 style="color: #ffeb3b;">OPEN YOUR GIFT!</h1>
+        <div style="font-size: 150px; cursor: pointer;" onclick="openGift(this)">🎁</div>
+        <h2 id="choco-msg" style="color: #ff007f;"></h2>
+        <button class="btn-next" id="to-cake" style="display: none; background: #00f2ff; color: black;" onclick="scrollToSec(3)">AB CAKE KATTE HAIN! 🎂</button>
+    </div>
+
+    <div class="section hidden" id="sec3">
+        <h1 class="headline" id="final-title">HAPPY BIRTHDAY SHUBHAM!</h1>
+        <div class="cake-container" id="cake-box">
+            <div class="candle" id="candle">🕯️</div>
+            <div class="cake" id="cake-main">🎂</div>
+        </div>
+        <button class="btn-next" id="blow-btn" onclick="finalCelebration()">BLOW CANDLE & CUT CAKE 🌬️</button>
+        <br>
+        <a href="https://www.instagram.com/cyber_oblivionx" id="insta" class="btn-next" style="display: none; text-decoration: none; background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);">WISH ME ON INSTA 💌</a>
+    </div>
+
+    <audio id="music" loop>
+        <source src="https://upload.wikimedia.org/wikipedia/commons/0/07/Happy_Birthday.ogg" type="audio/ogg">
+    </audio>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const music = document.getElementById('music');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+        let isPartyStarted = false;
+        const flowers = ['🌸', '🌹', '🌻', '🌷', '✨', '💐'];
+
+        function scrollToSec(num) {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('sec' + num).classList.remove('hidden');
+        }
+
+        function openGift(el) {
+            el.innerHTML = "🍫";
+            document.getElementById('choco-msg').innerHTML = "KITKAT & DAIRY MILK UNLOCKED!";
+            document.getElementById('to-cake').style.display = 'inline-block';
+            for(let i=0; i<30; i++) particles.push(new Particle(canvas.width/2, canvas.height/2, "🍫", "emoji"));
+        }
+
+        function finalCelebration() {
+            music.play();
+            isPartyStarted = true;
+            
+            // UI Changes
+            document.getElementById('candle').style.display = 'none';
+            document.getElementById('blow-btn').style.display = 'none';
+            document.getElementById('cake-main').innerHTML = "🍰";
+            document.getElementById('final-title').style.display = 'block';
+            document.getElementById('insta').style.display = 'inline-block';
+            
+            // Show Dancers
+            document.getElementById('d1').style.display = 'block';
+            document.getElementById('d2').style.display = 'block';
+
+            // Mega Flower Rain Start
+            for(let i=0; i<50; i++) {
+                particles.push(new Particle(Math.random()*canvas.width, 0, flowers[Math.floor(Math.random()*flowers.length)], 'emoji'));
+            }
+        }
+
+        class Particle {
+            constructor(x, y, char, type) {
+                this.x = x; this.y = y; this.char = char; this.type = type;
+                this.vx = (Math.random()-0.5)*15;
+                this.vy = (type === 'emoji') ? (Math.random()*5 + 2) : (Math.random()-0.5)*20;
+                this.alpha = 1;
+            }
+            draw() {
+                ctx.globalAlpha = this.alpha;
+                ctx.font = (this.type === 'firework') ? "10px Arial" : "35px Arial";
+                if(this.type === 'firework') {
+                    ctx.fillStyle = this.char;
+                    ctx.beginPath(); ctx.arc(this.x, this.y, 4, 0, Math.PI*2); ctx.fill();
+                } else { ctx.fillText(this.char, this.x, this.y); }
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if(this.type === 'firework') this.vy += 0.5; // Gravity for fireworks
+                this.alpha -= 0.008;
+            }
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(2, 2, 5, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            if(isPartyStarted) {
+                // Continuous Flower Rain
+                if(Math.random() < 0.2) {
+                    particles.push(new Particle(Math.random()*canvas.width, -50, flowers[Math.floor(Math.random()*flowers.length)], 'emoji'));
+                }
+                // Automatic Fireworks
+                if(Math.random() < 0.08) {
+                    const x = Math.random()*canvas.width;
+                    const y = Math.random()*canvas.height/2;
+                    const col = `hsl(${Math.random()*360},100%,50%)`;
+                    for(let i=0; i<30; i++) particles.push(new Particle(x, y, col, 'firework'));
+                }
+            }
+
+            particles.forEach((p, i) => {
+                if(p.alpha <= 0) particles.splice(i, 1);
+                else { p.update(); p.draw(); }
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
